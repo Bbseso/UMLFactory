@@ -1666,10 +1666,6 @@ const UmlEditor = forwardRef(({ projectId, initialModel, permission }, ref) => {
           if (mx >= obj.x + obj.width - 52 && mx <= obj.x + obj.width - 28 && my >= attrY + 2 && my <= attrY + 26) {
             showModal('Edit Attribute', obj.attributes[j].name, ({ name, visibility }) => {
               if (name) {
-                if (!isValidElementName(name)) {
-                  alert('Invalid attribute name! Name must not be empty, start with a number, contain spaces, or start with: ' + forbiddenStartChars.join(' '));
-                  return;
-                }
                 setClasses(prev => prev.map(c =>
                     c.id === obj.id ? { ...c, attributes: c.attributes.map((a, k) =>
                           k === j ? { ...a, name, visibility } : a
@@ -1703,10 +1699,6 @@ const UmlEditor = forwardRef(({ projectId, initialModel, permission }, ref) => {
         // Add attribute
         if (mx >= obj.x + 18 && mx <= obj.x + obj.width - 18 && my >= attrY - 12 && my <= attrY + 8) {
           showModal('Add Attribute', '', ({ name, visibility }) => {
-            if (!isValidElementName(name)) {
-              alert('Invalid attribute name! Name must not be empty, start with a number, contain spaces, or start with: ' + forbiddenStartChars.join(' '));
-              return;
-            }
             setClasses(prev => prev.map(c =>
               c.id === obj.id ? { ...c, attributes: [...c.attributes, { name, visibility }] } : c
             ));
@@ -1727,10 +1719,7 @@ const UmlEditor = forwardRef(({ projectId, initialModel, permission }, ref) => {
           if (mx >= obj.x + obj.width - 52 && mx <= obj.x + obj.width - 28 && my >= methodY + 2 && my <= methodY + 26) {
             showModal('Edit Method', obj.methods[j].name, ({ name, visibility }) => {
               if (name) {
-                if (!isValidElementName(name)) {
-                  alert('Invalid method name! Name must not be empty, start with a number, contain spaces, or start with: ' + forbiddenStartChars.join(' '));
-                  return;
-                }
+                
                 setClasses(prev => prev.map(c =>
                     c.id === obj.id ? { ...c, methods: c.methods.map((m, k) =>
                           k === j ? { ...m, name, visibility } : m
@@ -1765,10 +1754,7 @@ const UmlEditor = forwardRef(({ projectId, initialModel, permission }, ref) => {
         // Add method
         if (mx >= obj.x + 18 && mx <= obj.x + obj.width - 18 && my >= methodY - 12 && my <= methodY + 8) {
           showModal('Add Method', '', ({ name, visibility }) => {
-            if (!isValidElementName(name)) {
-              alert('Invalid method name! Name must not be empty, start with a number, contain spaces, or start with: ' + forbiddenStartChars.join(' '));
-              return;
-            }
+            
             setClasses(prev => prev.map(c =>
               c.id === obj.id ? { ...c, methods: [...c.methods, { name, visibility }] } : c
             ));
@@ -1871,7 +1857,7 @@ const UmlEditor = forwardRef(({ projectId, initialModel, permission }, ref) => {
   }, [classes, relationships, hoveredShape, zoom]);
 
   // === Toolbar actions ===
-  const forbiddenStartChars = ['*', '-', '#', '~', '+', '=', '/', '\\', '.', ',', '!', '@', '$', '%', '^', '&', '(', ')', '[', ']', '{', '}', ':', ';', '?', '<', '>', '|', '`', '"', "'"];
+  const forbiddenStartChars = ['*', '=', '/', '\\', '.', ',', '!', '@', '$', '%', '^', '&', '[', ']', '{', '}', ';', '?', '<', '>', '|', '`', '"', "'"];
   const isValidElementName = name => {
     if (!name || typeof name !== 'string') return false;
     const trimmed = name.trim();
