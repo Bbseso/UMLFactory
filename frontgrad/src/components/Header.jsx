@@ -4,6 +4,7 @@ import { useProjects } from "../context/ProjectContext";
 import { useNavigate } from "react-router-dom";
 import { FiUser, FiSun, FiMoon, FiHelpCircle } from "react-icons/fi";
 import { useState, useEffect } from "react";
+import HelpModal from "./HelpModal";
 
 
 function Header() {
@@ -18,6 +19,9 @@ function Header() {
     // Try to read from localStorage or default to false
     return localStorage.getItem("darkMode") === "true";
   });
+
+  // Help modal state
+  const [helpOpen, setHelpOpen] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -51,10 +55,15 @@ function Header() {
         <span className={styles.userEmail}>{displayName}</span>
       </div>
       <div className={styles.headerButtons}>
-        <button className={styles.iconButton}>
+        <button
+          className={styles.iconButton + " " + styles.helpButton}
+          onClick={() => setHelpOpen(true)}
+          title="Help"
+        >
           <FiHelpCircle size={22} color="#348983" />
         </button>
       </div>
+      <HelpModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }
