@@ -158,3 +158,8 @@ body.dark-mode {
   background: #2d3a40;
   border: 1px solid #5eead4;
 }
+
+.helpButton:hover {
+  background: #e0f7f4;
+  border: 1px solid #348983;
+}

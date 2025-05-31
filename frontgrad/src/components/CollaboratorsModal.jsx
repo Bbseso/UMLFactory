@@ -85,9 +85,9 @@ function CollaboratorsModal({ open, onClose, onAdd, project }) {
                     disabled={loading || savingPerms}
                     style={{ flex: 3, minWidth: 120, maxWidth: 220 }}
                   >
-                    <option value="EDIT">Edit and share</option>
-                    <option value="VIEW">View only</option>
-                    <option value="READONLY">Comment only</option>
+                    <option value="EDIT">Edit</option>
+                    <option value="VIEW">View</option>
+                    <option value="READONLY">Comment</option>
                   </select>
                 )}
                 <button
@@ -114,9 +114,9 @@ function CollaboratorsModal({ open, onClose, onAdd, project }) {
             style={{ borderColor: newEmail.trim().toLowerCase() === ownerEmail?.toLowerCase() ? '#e57373' : undefined }}
           />
           <select value={newPerm} onChange={e => setNewPerm(e.target.value)} className={styles.select} disabled={loading || savingPerms}>
-            <option value="EDIT">Edit and share</option>
-            <option value="VIEW">View only</option>
-            <option value="READONLY">Comment only</option>
+            <option value="EDIT">Edit</option>
+            <option value="VIEW">View</option>
+            <option value="READONLY">Comment</option>
           </select>
           <button className={styles.primaryBtn} onClick={handleAdd} disabled={loading || savingPerms || !newEmail.trim() || newEmail.trim().toLowerCase() === ownerEmail?.toLowerCase()}>
             Add
