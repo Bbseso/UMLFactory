@@ -1,0 +1,27 @@
+.spinnerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: #2f847c;
+}
+
+.spinnerCircle {
+  border: 6px solid #e0f2f1;
+  border-top: 6px solid #2f847c;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.spinnerMessage {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+} 

@@ -7,6 +7,7 @@ import UmlEditor from "./UMLEditor.jsx";
 import { useParams } from "react-router-dom";
 import { useProjects } from "../context/ProjectContext";
 import { ProjectGroupProvider, useProjectGroup, useProjectPermission } from "../context/ProjectGroupContext";
+import Spinner from "../components/Spinner";
 
 function getOwnerPermission(user, project) {
   if (!user || !project) return false;
@@ -33,9 +34,11 @@ function ProjectPageInner({ projectId }) {
   const [modalState, setModalState] = useState(null); // 'share' | 'collab' | null
   const isOwner = getOwnerPermission(user, project);
   const permission = isOwner ? 'OWNER' : useProjectPermission(user, project, group);
+  const [projectLoading, setProjectLoading] = useState(true);
 
   useEffect(() => {
     if (!projectId) return;
+    setProjectLoading(true);
     fetch(`http://localhost:9000/api/projects/${projectId}`, {
       credentials: "include",
     })
@@ -63,12 +66,18 @@ function ProjectPageInner({ projectId }) {
           setInitialModel(null);
           console.info("[ProjectPage] No diagram_json found, initialModel set to null");
         }
+        setProjectLoading(false);
       })
       .catch((err) => {
         setError("Failed to load project data. Please try again later.");
+        setProjectLoading(false);
         console.error(err);
       });
   }, [projectId]);
+
+  if (projectLoading || groupLoading) {
+    return <Spinner message="Loading project and group data..." />;
+  }
 
   return (
     <>
@@ -98,11 +107,7 @@ function ProjectPageInner({ projectId }) {
               </div>
             )}
           </div>
-        ) : (
-          <div style={{ textAlign: 'center', color: '#888', marginTop: '2em' }}>
-            Loading project details, please wait...
-          </div>
-        )}
+        ) : null}
       </div>
       <UmlEditor
         ref={editorRef}

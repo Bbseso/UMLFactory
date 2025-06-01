@@ -161,25 +161,6 @@ function ShareModal({ open, onClose, onManageCollaborators, projectId }) {
             </button>
           </section>
         </form>
-        <section>
-          <div className={styles.collabHeader}>
-            <span className={styles.collabLabel}>Project collaborators</span>
-            <a
-              href="#"
-              className={styles.manageLink}
-              onClick={(e) => {
-                e.preventDefault();
-                if (onManageCollaborators) onManageCollaborators();
-              }}
-            >
-              Manage
-            </a>
-          </div>
-          <div className={styles.avatars}>
-            <div className={styles.avatarA}>A</div>
-            <div className={styles.avatarB}>B</div>
-          </div>
-        </section>
       </div>
     </div>
   );

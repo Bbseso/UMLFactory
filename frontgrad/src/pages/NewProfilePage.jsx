@@ -27,9 +27,11 @@ const NewProfilePage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!user || !user.email) return;
+    setLoading(true);
     fetch(`http://localhost:9000/api/users/${encodeURIComponent(user.email)}`, {
       credentials: "include",
     })
@@ -43,8 +45,12 @@ const NewProfilePage = () => {
           password: "********",
         });
         setProfileImage(data.profileImage || "");
+        setLoading(false);
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [user]);
 
   const handleImageUpload = (e) => {
@@ -67,8 +73,10 @@ const NewProfilePage = () => {
   const handleSave = async () => {
     setError("");
     setSuccess("");
+    setLoading(true);
     if (!user || !user.email) {
       setError("User not loaded");
+      setLoading(false);
       return;
     }
     try {
@@ -98,8 +106,10 @@ const NewProfilePage = () => {
       } else {
         setError(await res.text());
       }
+      setLoading(false);
     } catch (err) {
       setError(err.message || "Something went wrong");
+      setLoading(false);
     }
   };
 
@@ -133,106 +143,114 @@ const NewProfilePage = () => {
 
   return (
     <div className={styles.accountContainer}>
-      <div className={styles.profileSection}>
-        <div className={styles.profilePicture}>
-          <img src={profileImage} alt="Profile" />
+      {loading ? (
+        <div style={{ textAlign: 'center', color: '#888', marginTop: '2em' }}>
+          Loading profile, please wait...
         </div>
-        <button
-          className={styles.uploadBtn}
-          onClick={() => fileInputRef.current.click()}
-        >
-          Change Photo
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          hidden
-          accept="image/*"
-          onChange={handleImageUpload}
-        />
-      </div>
-      <div className={styles.contentSection}>
-        {[
-          { label: "First Name", field: "firstName" },
-          { label: "Last Name", field: "lastName" },
-          { label: "Username", field: "username" },
-        ].map(({ label, field }) => (
-          <div className={styles.inputGroup} key={field}>
-            <label className={styles.inputLabel}>{label}</label>
-            <div className={styles.inputRow}>
+      ) : (
+        <>
+          <div className={styles.profileSection}>
+            <div className={styles.profilePicture}>
+              <img src={profileImage} alt="Profile" />
+            </div>
+            <button
+              className={styles.uploadBtn}
+              onClick={() => fileInputRef.current.click()}
+            >
+              Change Photo
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              hidden
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+          </div>
+          <div className={styles.contentSection}>
+            {[
+              { label: "First Name", field: "firstName" },
+              { label: "Last Name", field: "lastName" },
+              { label: "Username", field: "username" },
+            ].map(({ label, field }) => (
+              <div className={styles.inputGroup} key={field}>
+                <label className={styles.inputLabel}>{label}</label>
+                <div className={styles.inputRow}>
+                  <input
+                    type="text"
+                    className={styles.editableField}
+                    value={fields[field]}
+                    disabled={!editStates[field]}
+                    onChange={(e) => handleFieldChange(field, e.target.value)}
+                  />
+                  <button
+                    className={styles.btnEdit}
+                    onClick={() => toggleEdit(field)}
+                  >
+                    {editStates[field] ? "Save" : "Edit"}
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}>Email Address</label>
               <input
-                type="text"
+                type="email"
                 className={styles.editableField}
-                value={fields[field]}
-                disabled={!editStates[field]}
-                onChange={(e) => handleFieldChange(field, e.target.value)}
+                value={user?.email || ""}
+                disabled
+                readOnly
               />
+            </div>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}>Occupation</label>
+              <select
+                className={styles.editableField}
+                value={fields.occupation}
+                onChange={(e) => handleFieldChange("occupation", e.target.value)}
+              >
+                {occupationOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.inputGroup}>
+              <label className={styles.inputLabel}>Password</label>
+              <div className={styles.inputRow}>
+                <input
+                  type="password"
+                  className={styles.editableField}
+                  value={fields.password}
+                  disabled
+                  readOnly
+                />
+                <button className={styles.btnEdit} onClick={handleChangePassword}>
+                  Change
+                </button>
+              </div>
+            </div>
+            {error && <div className={styles.errorMessage}>Oops! Something went wrong: {error}</div>}
+            {success && <div className={styles.successMessage}>{success}</div>}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "2rem",
+              }}
+            >
               <button
                 className={styles.btnEdit}
-                onClick={() => toggleEdit(field)}
+                onClick={handleSave}
+                style={{ fontSize: "1.1rem", padding: "0.7rem 2.2rem" }}
               >
-                {editStates[field] ? "Save" : "Edit"}
+                Save Changes
               </button>
             </div>
           </div>
-        ))}
-        <div className={styles.inputGroup}>
-          <label className={styles.inputLabel}>Email Address</label>
-          <input
-            type="email"
-            className={styles.editableField}
-            value={user?.email || ""}
-            disabled
-            readOnly
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          <label className={styles.inputLabel}>Occupation</label>
-          <select
-            className={styles.editableField}
-            value={fields.occupation}
-            onChange={(e) => handleFieldChange("occupation", e.target.value)}
-          >
-            {occupationOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.inputGroup}>
-          <label className={styles.inputLabel}>Password</label>
-          <div className={styles.inputRow}>
-            <input
-              type="password"
-              className={styles.editableField}
-              value={fields.password}
-              disabled
-              readOnly
-            />
-            <button className={styles.btnEdit} onClick={handleChangePassword}>
-              Change
-            </button>
-          </div>
-        </div>
-        {error && <div className={styles.errorMessage}>Oops! Something went wrong: {error}</div>}
-        {success && <div className={styles.successMessage}>{success}</div>}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "2rem",
-          }}
-        >
-          <button
-            className={styles.btnEdit}
-            onClick={handleSave}
-            style={{ fontSize: "1.1rem", padding: "0.7rem 2.2rem" }}
-          >
-            Save Changes
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
